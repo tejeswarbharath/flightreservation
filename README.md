@@ -1,6 +1,8 @@
 # Flightreservation
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.1.3.
+Flight Reservation Website is used to reserve flights for various purposes like vacation, business travel, family travel.
+
+The codebase was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.1.3.
 
 ## Development server
 
@@ -25,3 +27,9 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+## References
+
+https://therichpost.com/angular-15-flight-booking-form-with-validations-working-example/
+https://www.positronx.io/full-angular-firebase-authentication-system/

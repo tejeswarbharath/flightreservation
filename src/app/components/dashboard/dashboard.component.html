@@ -1,0 +1,152 @@
+<div>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0">
+            <img class="brand-logo" src="assets/MonsterLogo.png" alt="positronX.io Logo">
+        </a>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="displayProfile()">
+                                <i class="fas fa-user"></i>User Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="displayReservation()">
+                                <i class="fa fa-plane ms-3" active></i>Flight Reservation
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" (click)="authService.SignOut()">
+                                <i class="fas fa-sign-out-alt"></i>Log out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div *ngIf="profileVisible">
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" *ngIf="authService.userData as user">
+                    <div class="inner-adjust">
+                        <div class="pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">User Profile</h1>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="media">
+                                    <img class="align-self-start mr-5 img-thumbnail rounded-circle"
+                                        src="{{(user.photoURL) ? user.photoURL : '/assets/dummy-user.png'}}"
+                                        alt="{{user.displayName}}">
+                                    <div class="media-body">
+                                        <h1>Hello: <strong>{{(user.displayName) ? user.displayName : 'User'}}</strong>
+                                        </h1>
+                                        <p>User ID: <strong>{{user.uid}}</strong></p>
+                                        <p>Email: <strong>{{user.email}}</strong></p>
+                                        <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <div *ngIf="reservationVisible">
+                <div fxLayout="column" fxLayoutGap="20px">
+                    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                        <div fxLayout="column" style="margin-top: 10px" fxLayoutGap="10px">
+                            <div fxLayoutAlign="center">
+                                <h1><b>Flight Booking</b></h1>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign="space-evenly center">
+                                <div fxLayout="column" fxFlex="40">
+                                    <label>Airline Name</label>
+                                    <mat-form-field>
+                                        <mat-label>Airline</mat-label>
+                                        <input type="text" placeholder="Airlines" aria-label="Airline Name" matInput
+                                            formControlName="airline" [matAutocomplete]="auto" class="form-control"
+                                            [ngClass]="{ 'is-invalid': submitted && f.airline.errors }">
+                                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                            <mat-option *ngFor="let al of filterAirlineList | async" [value]="al">
+                                                {{al}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                    <div *ngIf="submitted && f.airline.errors">
+                                        <div *ngIf="f.airline.errors.required">Airline Name Required.</div>
+                                    </div>
+                                </div>
+                                <div fxLayout="column" fxFlex="40">
+                                    <label>Flight Number</label>
+                                    <mat-form-field>
+                                        <mat-label>Flight Number</mat-label>
+                                        <input matInput formControlName="flightNumber"
+                                            [ngClass]="{ 'is-invalid': submitted && f.flightNumber.errors }">
+                                        <mat-hint>ABXXXX</mat-hint>
+                                    </mat-form-field>
+                                    <div *ngIf="submitted && f.flightNumber.errors">
+                                        <div *ngIf="f.flightNumber.errors.required">Flight Number Required.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign="space-evenly center">
+                                <div fxLayout="column" fxFlex="40">
+                                    <mat-form-field>
+                                        <mat-label>Arrival Date</mat-label>
+                                        <input matInput [matDatepicker]="pickerFrom" formControlName="arrivalDate"
+                                            [ngClass]="{ 'is-invalid': submitted && f.arrivalDate.errors }">
+                                        <mat-hint>MM/DD/YYYY</mat-hint>
+                                        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                                        <mat-datepicker #pickerFrom></mat-datepicker>
+                                    </mat-form-field>
+                                    <div *ngIf="submitted && f.arrivalDate.errors">
+                                        <div *ngIf="f.arrivalDate.errors.required">Arrival Date Required.</div>
+                                    </div>
+                                </div>
+                                <div fxLayout="column" fxFlex="40">
+                                    <mat-label>Arrival Time</mat-label>
+                                    <input [ngxTimepicker]="picker" formControlName="arrivalTime"
+                                        [ngClass]="{ 'is-invalid': submitted && f.arrivalTime.errors }">
+                                    <ngx-material-timepicker #picker></ngx-material-timepicker>
+                                    <mat-hint>XX:XX AM/PM</mat-hint>
+                                    <div *ngIf="submitted && f.arrivalTime.errors">
+                                        <div *ngIf="f.arrivalTime.errors.required">Arrival Time Required.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fxLayout="row" fxLayoutAlign="space-evenly center">
+                                <div fxLayout="column" fxFlex="40">
+                                    <section>
+                                        <mat-form-field>
+                                            <mat-label>Number of Guests</mat-label>
+                                            <input matInput type="number" placeholder="No.of Guests"
+                                                [(ngModel)]="numberOfGuests" formControlName="numOfGuests"
+                                                [ngClass]="{ 'is-invalid': submitted && f.numOfGuests.errors }">
+                                        </mat-form-field>
+                                    </section>
+                                    <div *ngIf="submitted && f.numOfGuests.errors">
+                                        <div *ngIf="f.numOfGuests.errors.required">NumOfGuests is required.</div>
+                                    </div>
+                                </div>
+                                <div fxLayout="column" fxFlex="40">
+                                    <mat-form-field [style.fontSize]="16">
+                                        <mat-label>Comments</mat-label>
+                                        <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                                            cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" formControlName="comments"></textarea>
+                                    </mat-form-field>
+                                    <div *ngIf="f.comments.errors">
+                                        <div *ngIf="f.comments.errors.required">Error in Comments Field</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div fxLayout="column" fxLayoutAlign="space-evenly center">
+                                <button mat-raised-button type="submit" color="primary">Submit<i class="fa fa-plane ms-3"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
